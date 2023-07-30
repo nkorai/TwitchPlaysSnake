@@ -1,17 +1,34 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Hello World!</title>
+    <title>Twitch Plays Snake!</title>
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'"
+    />
+    <meta
+      http-equiv="X-Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'"
+    />
+    <link rel="stylesheet" href="./dist/main.css" />
   </head>
-  <body style="-webkit-app-region: drag;">
+  <body>
     <script src="./dist/bundle.js"></script>
     <div id="game_container">
+      <div id="game_heading">Twitch Plays Snake!</div>
+      <div id="game_instructions">
+        Welcome! This is Twitch Plays Snake. Everyone in chat can play the snake
+        game (sg) below. <br /><br />
+        Use the commands sg:right, sg:right10, sg:left, sg:up, sg:down etc to
+        get a new high score!
+      </div>
+
       <canvas id="game_board" height="380" width="340"></canvas>
-      <div id="score" style="font-size: 20px; font-weight: bold; font-family: Arial, Helvetica, sans-serif; color: white; padding-top: 10px;"></div>
-      <div id="high_score" style="font-size: 20px; font-weight: bold; font-family: Arial, Helvetica, sans-serif; color: white; padding-top: 10px;"></div>
+      <div id="progress_bar_container"></div>
+      <div id="high_score"></div>
+      <div id="score"></div>
     </div>
-    <!-- You can also require other files to run in this process -->
   </body>
 </html>

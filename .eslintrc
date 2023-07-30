@@ -1,28 +1,26 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
-  "plugins": [
-    "eslint-plugin-node",
-    "@typescript-eslint"
-  ],
+  "plugins": ["eslint-plugin-node", "@typescript-eslint"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "async",
     "async/node",
-    "async/typescript"
+    "async/typescript",
+    "prettier"
   ],
   "parserOptions": {
     "project": ["tsconfig.json"]
   },
   "rules": {
     "no-await-in-loop": "off",
-     // note you must disable the base rule as it can report incorrect errors
+    // note you must disable the base rule as it can report incorrect errors
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": [
       "warn", // or "error"
-      { 
+      {
         "argsIgnorePattern": "^_",
         "varsIgnorePattern": "^_",
         "caughtErrorsIgnorePattern": "^_"
