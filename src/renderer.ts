@@ -23,8 +23,8 @@ declare global {
 }
 
 interface Config {
-  cw: number;
   snakeSize: number;
+  cellSize: number;
 }
 
 interface Coordinates {
@@ -64,8 +64,8 @@ class Stage {
     this.score = 0;
     this.direction = 'right';
     this.config = {
-      cw: 10,
       snakeSize: 2,
+      cellSize: 10,
     };
 
     // Merge config
@@ -92,12 +92,12 @@ class Snake {
     // Add food on stage
     this.stage.food = {
       x: Math.round(
-        (Math.random() * (this.stage.width - this.stage.config.cw)) /
-          this.stage.config.cw,
+        (Math.random() * (this.stage.width - this.stage.config.cellSize)) /
+          this.stage.config.cellSize,
       ),
       y: Math.round(
-        (Math.random() * (this.stage.height - this.stage.config.cw)) /
-          this.stage.config.cw,
+        (Math.random() * (this.stage.height - this.stage.config.cellSize)) /
+          this.stage.config.cellSize,
       ),
     };
   }
@@ -249,8 +249,9 @@ class Game {
     const highScoreElement = document.getElementById('high_score');
 
     const scoreText = 'Score: ' + this.stage.score;
-    const highScoreText = 'High Score: ' + (await window.electronAPI.getHighScore());
-    
+    const highScoreText =
+      'High Score: ' + (await window.electronAPI.getHighScore());
+
     if (scoreElement.innerText != scoreText) {
       scoreElement.innerText = scoreText;
     }
@@ -264,10 +265,10 @@ class Game {
     // Fill with gradient
     this.context.fillStyle = `#${cellTypeToColorMap[cellType]}`;
     this.context.fillRect(
-      x * this.stage.config.cw + 6,
-      y * this.stage.config.cw + 6,
-      10,
-      10,
+      x * this.stage.config.cellSize,
+      y * this.stage.config.cellSize,
+      this.stage.config.cellSize,
+      this.stage.config.cellSize,
     );
   }
 
@@ -275,9 +276,9 @@ class Game {
   collision(nx: number, ny: number, initialRenderPass: boolean) {
     const snakeHasHitTheSidesOfTheGame =
       nx == -1 ||
-      nx == this.stage.width / this.stage.config.cw ||
+      nx == this.stage.width / this.stage.config.cellSize ||
       ny == -1 ||
-      ny == this.stage.height / this.stage.config.cw;
+      ny == this.stage.height / this.stage.config.cellSize;
 
     const currentTail =
       this.snake.stage.snakeBodyPositions[

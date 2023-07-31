@@ -99,7 +99,7 @@ export const processBuffer = (): void => {
         _acc: Record<string, PopularityReduction>,
         curr: GameCommand,
         _index: number,
-        _arr: any,
+        _arr: GameCommand[],
       ) => {
         const key = curr.toPopularityString();
         if (!reductionRecords[key]) {
