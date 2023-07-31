@@ -8,9 +8,6 @@ import {
 import { Config } from './config';
 import { mainWindow } from './main';
 
-const MIN_GAME_CHAT_DISTANCE = 1;
-const MAX_GAME_CHAT_DISTANCE = 10;
-
 const inputBuffer: Array<GameCommand> = [];
 
 /* This is the entrypoint for all incoming game chat messages */
@@ -64,16 +61,10 @@ export const processInputToBuffer = (
   }
 
   let distanceInteger = parseInt(distanceString);
-  // Clamp down the values between the minimum and maximum distance values
-  distanceInteger = Math.min(distanceInteger, MAX_GAME_CHAT_DISTANCE);
-  distanceInteger = Math.max(distanceInteger, MIN_GAME_CHAT_DISTANCE);
 
-  const distanceIsValid =
-    distanceInteger >= MIN_GAME_CHAT_DISTANCE &&
-    distanceInteger <= MAX_GAME_CHAT_DISTANCE;
-  if (!distanceIsValid) {
-    return;
-  }
+  // Clamp down the values between the minimum and maximum distance values
+  distanceInteger = Math.min(distanceInteger, Config.maxGameChatDistance);
+  distanceInteger = Math.max(distanceInteger, Config.minGameChatDistance);
 
   inputBuffer.push(new GameCommand(direction, distanceInteger));
 };
@@ -89,36 +80,47 @@ const emitVotingSignal = (): void => {
   );
 };
 
+interface PopularityReduction {
+  gameCommand: GameCommand;
+  popularity: number;
+}
+
 export const processBuffer = (): void => {
   emitVotingSignal();
 
-  const popularityKeyToGameCommand: { [popularityKey: string]: GameCommand } =
-    {};
-  const popularityMap: { [popularityKey: string]: number } = {};
-
-  let gameCommandToExecute;
+  let gameCommandToExecute: GameCommand;
   // Copy the curernt buffer and empty out the input buffer
   const currentBuffer = inputBuffer.splice(0, inputBuffer.length);
   if (currentBuffer.length > 0) {
-    // De-duplicated input commands by popularity hits
-    for (let i = 0; i < currentBuffer.length; i++) {
-      const gameCommand = currentBuffer[i];
-      const popularityKey = gameCommand.toPopularityString();
-      if (!popularityMap[popularityKey]) {
-        popularityMap[popularityKey] = 0;
-      }
-      popularityMap[popularityKey]++;
-      popularityKeyToGameCommand[popularityKey] = gameCommand;
-    }
+    const reductionRecords: Record<string, PopularityReduction> = {};
+    // Group game commands by popularity, add counts
+    currentBuffer.reduce(
+      (
+        _acc: Record<string, PopularityReduction>,
+        curr: GameCommand,
+        _index: number,
+        _arr: any,
+      ) => {
+        const key = curr.toPopularityString();
+        if (!reductionRecords[key]) {
+          reductionRecords[key] = {
+            gameCommand: curr,
+            popularity: 0,
+          };
+        }
 
-    // Figure out the most popular command TODO: can be done in the above loop
-    let mostPopularKey = Object.keys(popularityMap)[0];
-    for (const popularityKey of Object.keys(popularityMap)) {
-      if (popularityMap[popularityKey] > popularityMap[mostPopularKey]) {
-        mostPopularKey = popularityKey;
-      }
-    }
-    gameCommandToExecute = popularityKeyToGameCommand[mostPopularKey];
+        reductionRecords[key].popularity++;
+        return reductionRecords;
+      },
+      reductionRecords,
+    );
+
+    // Sort by most popular descending, get first in array (most popular)
+    const popularityCommand = Object.values(reductionRecords).sort(
+      (reductionA: PopularityReduction, reductionB: PopularityReduction) =>
+        reductionB.popularity - reductionA.popularity,
+    )[0];
+    gameCommandToExecute = popularityCommand.gameCommand;
   } else if (Config.gameMode === GameMode.CONTINUOUS) {
     gameCommandToExecute = new GameCommand(Direction.CONTINUE, 1);
   } else {

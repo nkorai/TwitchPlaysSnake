@@ -78,7 +78,7 @@ class Stage {
 class Snake {
   stage: Stage;
 
-  constructor(canvas: HTMLCanvasElement, config: Config, stage: Stage) {
+  constructor(_canvas: HTMLCanvasElement, _config: Config, stage: Stage) {
     this.stage = stage;
 
     // Call init Snake
@@ -220,7 +220,6 @@ class Game {
       tail = { x: newX, y: newY };
       this.stage.score++;
       if (this.stage.score > (await window.electronAPI.getHighScore())) {
-        console.log('setting high score');
         await window.electronAPI.setHighScore(this.stage.score);
       }
 
@@ -249,9 +248,16 @@ class Game {
     const scoreElement = document.getElementById('score');
     const highScoreElement = document.getElementById('high_score');
 
-    scoreElement.innerText = 'Score: ' + this.stage.score;
-    highScoreElement.innerText =
-      'High Score: ' + (await window.electronAPI.getHighScore());
+    const scoreText = 'Score: ' + this.stage.score;
+    const highScoreText = 'High Score: ' + (await window.electronAPI.getHighScore());
+    
+    if (scoreElement.innerText != scoreText) {
+      scoreElement.innerText = scoreText;
+    }
+
+    if (highScoreElement.innerText != highScoreText) {
+      highScoreElement.innerText = highScoreText;
+    }
   }
 
   drawCell(x: number, y: number, cellType: CellType) {
