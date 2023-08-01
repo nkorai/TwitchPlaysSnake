@@ -3,7 +3,7 @@ import Store from 'electron-store';
 import * as path from 'path';
 import * as tmi from 'tmi.js';
 import { IpcEventString } from './common';
-import { Config } from './config';
+import { getConfiguration, setConfiguration } from './config';
 import { processBuffer, processInputToBuffer } from './inputs';
 import { getHighScore, setHighScore } from './score';
 import * as secrets from './utils/secrets.json';
@@ -71,6 +71,8 @@ function createWindow() {
     .catch(() => console.log('Unable to load index.html'));
   ipcMain.handle(IpcEventString.SET_HIGH_SCORE, setHighScore);
   ipcMain.handle(IpcEventString.GET_HIGH_SCORE, getHighScore);
+  ipcMain.handle(IpcEventString.SET_CONFIGURATION, setConfiguration);
+  ipcMain.handle(IpcEventString.GET_CONFIGURATION, getConfiguration);
 }
 
 // This method will be called when Electron has finished
@@ -81,7 +83,7 @@ app
   .then(() => {
     createWindow();
 
-    setInterval(processBuffer, Config.voteDurationMs);
+    setInterval(processBuffer, getConfiguration().voteDurationMs);
 
     app.on('activate', function () {
       // On macOS it's common to re-create a window in the app when the

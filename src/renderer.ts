@@ -15,7 +15,6 @@ import {
   VotingSignal,
 } from './common';
 import './styles.css';
-import { Config } from './config';
 
 declare global {
   interface Window {
@@ -169,7 +168,7 @@ class Game {
 
     // First voting render
     const firstVotingSignal: VotingSignal = {
-      durationMs: Config.voteDurationMs
+      durationMs: (await window.electronAPI.getConfiguration()).voteDurationMs
     };
     onVotingSignal(undefined as any, JSON.stringify(firstVotingSignal));
   }

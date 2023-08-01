@@ -12,10 +12,10 @@ export interface ElectronAPI {
   onVotingSignal: (
     callback: OnMainCommandCallbackFunction,
   ) => Electron.IpcRenderer;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setHighScore: (highScore: number) => Promise<any>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  getHighScore: () => Promise<any>;
+  getHighScore: () => Promise<number>;
+  setConfiguration: (configuration: Configuration) => Promise<any>;
+  getConfiguration: () => Promise<Configuration>;
 }
 
 export enum Direction {
@@ -74,4 +74,13 @@ export enum IpcEventString {
   SET_HIGH_SCORE = 'setHighScore',
   GET_HIGH_SCORE = 'getHighScore',
   VOTE_PERIOD_STARTED = 'votePeriodStarted',
+  GET_CONFIGURATION = 'getConfiguration',
+  SET_CONFIGURATION = 'setConfiguration',
 }
+
+export interface Configuration {
+  voteDurationMs: number;
+  minGameChatDistance: number;
+  maxGameChatDistance: number;
+  gameMode: GameMode;
+};

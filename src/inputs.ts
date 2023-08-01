@@ -5,7 +5,7 @@ import {
   IpcEventString,
   VotingSignal,
 } from './common';
-import { Config } from './config';
+import { getConfiguration } from './config';
 import { mainWindow } from './main';
 
 const inputBuffer: Array<GameCommand> = [];
@@ -25,7 +25,7 @@ export const processInputToBuffer = (
   ) {
     const inputGameMode = inputString.replace('sg:gamemode:', '') as GameMode;
     if (Object.values(GameMode).includes(inputGameMode)) {
-      Config.gameMode = inputGameMode;
+      getConfiguration().gameMode = inputGameMode;
     }
   }
 
@@ -63,15 +63,15 @@ export const processInputToBuffer = (
   let distanceInteger = parseInt(distanceString);
 
   // Clamp down the values between the minimum and maximum distance values
-  distanceInteger = Math.min(distanceInteger, Config.maxGameChatDistance);
-  distanceInteger = Math.max(distanceInteger, Config.minGameChatDistance);
+  distanceInteger = Math.min(distanceInteger, getConfiguration().maxGameChatDistance);
+  distanceInteger = Math.max(distanceInteger, getConfiguration().minGameChatDistance);
 
   inputBuffer.push(new GameCommand(direction, distanceInteger));
 };
 
 const emitVotingSignal = (): void => {
   const votingSignal: VotingSignal = {
-    durationMs: Config.voteDurationMs,
+    durationMs: getConfiguration().voteDurationMs,
   };
 
   mainWindow.webContents.send(
@@ -121,7 +121,7 @@ export const processBuffer = (): void => {
         reductionB.popularity - reductionA.popularity,
     )[0];
     gameCommandToExecute = popularityCommand.gameCommand;
-  } else if (Config.gameMode === GameMode.CONTINUOUS) {
+  } else if (getConfiguration().gameMode === GameMode.CONTINUOUS) {
     gameCommandToExecute = new GameCommand(Direction.CONTINUE, 1);
   } else {
     return;
