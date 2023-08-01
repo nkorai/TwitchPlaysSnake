@@ -15,6 +15,7 @@ import {
   VotingSignal,
 } from './common';
 import './styles.css';
+import { Config } from './config';
 
 declare global {
   interface Window {
@@ -65,7 +66,7 @@ class Stage {
     this.direction = 'right';
     this.config = {
       snakeSize: 2,
-      cellSize: 10,
+      cellSize: 20,
     };
 
     // Merge config
@@ -152,11 +153,9 @@ class Game {
       container.innerHTML = '';
 
       const bar = new ProgressBar.Line(container, {
-        strokeWidth: 4,
+        fill: `#${cellTypeToColorMap[CellType.BACKGROUND]}`,
         easing: 'linear',
-        color: `#${cellTypeToColorMap[CellType.BACKGROUND]}`,
-        trailColor: '#000',
-        trailWidth: 1,
+        color: `#${cellTypeToColorMap[CellType.HEAD]}`,
         svgStyle: { width: '100%', height: '100%' },
       });
 
@@ -167,6 +166,12 @@ class Game {
 
     window.electronAPI.onGameCommand(onGameCommand);
     window.electronAPI.onVotingSignal(onVotingSignal);
+
+    // First voting render
+    const firstVotingSignal: VotingSignal = {
+      durationMs: Config.voteDurationMs
+    };
+    onVotingSignal(undefined as any, JSON.stringify(firstVotingSignal));
   }
 
   async render(gameCommand?: GameCommand, initialRenderPass?: boolean) {
@@ -263,13 +268,19 @@ class Game {
 
   drawCell(x: number, y: number, cellType: CellType) {
     // Fill with gradient
-    this.context.fillStyle = `#${cellTypeToColorMap[cellType]}`;
-    this.context.fillRect(
+    const cellColor = `#${cellTypeToColorMap[cellType]}`;
+    this.context.strokeStyle = cellColor;
+    this.context.fillStyle = cellColor;
+    this.context.beginPath();
+    this.context.roundRect(
       x * this.stage.config.cellSize,
       y * this.stage.config.cellSize,
       this.stage.config.cellSize,
       this.stage.config.cellSize,
+      6
     );
+    this.context.stroke();
+    this.context.fill();
   }
 
   // Check Collision

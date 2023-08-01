@@ -35,7 +35,7 @@ export const processInputToBuffer = (
     .replace(/\s/g, '');
   const chatCommandMatchGroups =
     directionAndDistanceString.match(/([a-zA-Z]+)(-?\d+)?/);
-  if (chatCommandMatchGroups.length != 3) {
+  if (!chatCommandMatchGroups || chatCommandMatchGroups.length != 3) {
     return;
   }
 

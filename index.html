@@ -21,14 +21,21 @@
       <div id="game_instructions">
         Welcome! This is Twitch Plays Snake. Everyone in chat can play the snake
         game (sg) below. <br /><br />
-        Use the commands sg:right, sg:right10, sg:left, sg:up, sg:down etc to
-        get a new high score!
+        Use commands like sg:right, sg:right10, sg:left, sg:up, sg:down to
+        get a new high score.
       </div>
 
       <canvas id="game_board" height="380" width="340"></canvas>
-      <div id="progress_bar_container"></div>
-      <div id="high_score"></div>
-      <div id="score"></div>
+      <div id="game_state_info">
+        <div class="left">
+          <div id="high_score"></div>
+          <div id="score"></div>
+        </div>
+        <div class="right">
+          <div id="progress_bar_heading">Next vote in:</div>
+          <div id="progress_bar_container"></div>
+        </div>
+      </div>
     </div>
   </body>
 </html>

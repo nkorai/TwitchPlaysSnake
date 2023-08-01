@@ -1,5 +1,11 @@
 body {
   -webkit-app-region: drag;
+  font-family: Arial, Helvetica, sans-serif;
+  color: white;
+}
+
+#game_container {
+  width: 348px;
 }
 
 canvas {
@@ -10,46 +16,48 @@ canvas {
 #game_heading {
   font-size: 24px;
   font-weight: bold;
-  font-family: Arial, Helvetica, sans-serif;
-  color: white;
   padding-top: 10px;
 }
 
 #game_instructions {
   font-size: 14px;
-  font-family: Arial, Helvetica, sans-serif;
-  color: white;
   padding-top: 10px;
   padding-bottom: 10px;
 }
 
 #game_board {
+  display: block;
   padding-left: 0;
   padding-right: 0;
   margin-left: auto;
   margin-right: auto;
-  display: block;
+}
+
+#game_state_info {
+  display: flex;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+#game_state_info > .left {
+  width: 50%;
+}
+
+
+#game_state_info > .right {
+  width: 50%;
 }
 
 #high_score {
   font-size: 16px;
-  font-weight: bold;
-  font-family: Arial, Helvetica, sans-serif;
-  color: white;
-  padding-top: 10px;
 }
 
 #score {
   font-size: 18px;
-  font-weight: bold;
-  font-family: Arial, Helvetica, sans-serif;
-  color: white;
-  padding-top: 10px;
 }
 
 #progress_bar_container {
   display: block;
-  height: 40px;
+  height: 10px;
   width: 100%;
-  padding-top: 10px;
 }
