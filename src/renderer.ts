@@ -152,10 +152,9 @@ class Game {
       container.innerHTML = '';
 
       const bar = new ProgressBar.Line(container, {
-        fill: `#${cellTypeToColorMap[CellType.BACKGROUND]}`,
         easing: 'linear',
-        color: `#${cellTypeToColorMap[CellType.HEAD]}`,
-        svgStyle: { width: '100%', height: '100%' },
+        color: `#${cellTypeToColorMap[CellType.TAIL]}`,
+        svgStyle: { width: 'calc(100% - 6px)', height: 'calc(100% - 6px)' },
       });
 
       bar.animate(1.0, {

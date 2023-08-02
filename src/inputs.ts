@@ -5,7 +5,7 @@ import {
   IpcEventString,
   VotingSignal,
 } from './common';
-import { getConfiguration } from './config';
+import { getConfiguration, setConfiguration } from './config';
 import { mainWindow } from './main';
 
 const inputBuffer: Array<GameCommand> = [];
@@ -25,7 +25,9 @@ export const processInputToBuffer = (
   ) {
     const inputGameMode = inputString.replace('sg:gamemode:', '') as GameMode;
     if (Object.values(GameMode).includes(inputGameMode)) {
-      getConfiguration().gameMode = inputGameMode;
+      const persistentConfiguration = getConfiguration();
+      persistentConfiguration.gameMode = inputGameMode;
+      setConfiguration(undefined, persistentConfiguration);
     }
   }
 

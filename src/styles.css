@@ -9,7 +9,7 @@ body {
 }
 
 canvas {
-  border: 5px solid #415d43;
+  border: 5px solid #304321;;
   background: #000;
 }
 
@@ -58,6 +58,10 @@ canvas {
 
 #progress_bar_container {
   display: block;
-  height: 10px;
+  height: 15px;
   width: 100%;
+}
+
+#progress_bar_container > svg {
+  border: 3px solid #304321;
 }
