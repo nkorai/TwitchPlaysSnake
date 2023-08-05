@@ -1,7 +1,9 @@
+import { ApiClient } from '@twurple/api';
+import { ElectronAuthProvider } from '@twurple/auth-electron';
+import { ChatClient, PrivateMessage } from '@twurple/chat';
 import { app, BrowserWindow, ipcMain } from 'electron';
 import Store from 'electron-store';
 import * as path from 'path';
-import * as tmi from 'tmi.js';
 import { IpcEventString } from './common';
 import { getConfiguration, setConfiguration } from './config';
 import { processBuffer, processInputToBuffer } from './inputs';
@@ -9,45 +11,43 @@ import { getHighScore, setHighScore } from './score';
 import * as secrets from './utils/secrets.json';
 
 export let mainWindow: BrowserWindow;
-
 export const appPersistentStore = new Store();
+
+const clientId = 'ik8s2f4mbxkgmgz9gfffjq6r2xcrww';
+const redirectUri = 'http://localhost/login';
+
+const authProvider = new ElectronAuthProvider({
+  clientId,
+  redirectUri,
+});
+
+const apiClient = new ApiClient({
+  authProvider,
+});
 
 // Setup connection configurations
 // These include the channel, username and password
-const client = new tmi.Client({
-  options: { debug: true, messagesLogLevel: 'info' },
-  connection: {
-    reconnect: true,
-    secure: true,
-  },
-  identity: {
-    username: secrets.twitchBotUsername,
-    password: secrets.twitchPassword,
-  },
+const chatClient = new ChatClient({
   channels: [secrets.twitchChannelName],
 });
-
-// Connect to the channel specified using the setings found in the configurations
-// Any error found shall be logged out in the console
-client.connect().catch(console.error);
+chatClient.connect().catch(console.log);
 
 // We shall pass the parameters which shall be required
-client.on(
-  'message',
-  (
+chatClient.onMessage(
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  async (
     _channel: string,
-    userstate: tmi.ChatUserstate,
-    message: string,
-    self: boolean,
+    _user: string,
+    text: string,
+    msg: PrivateMessage,
   ) => {
-    // Lack of this statement or it's inverse (!self) will make it in active
-    if (self) return;
-
-    const canUpdateGameState =
-      userstate.badges?.admin === '1' ||
-      userstate.badges?.broadcaster === '1' ||
-      userstate.badges?.moderator === '1';
-    processInputToBuffer(message, canUpdateGameState);
+    const canUpdateGameState = msg.userInfo.isBroadcaster || msg.userInfo.isMod;
+    processInputToBuffer(text, canUpdateGameState);
+    await apiClient.moderation.deleteChatMessages(
+      msg.channelId,
+      msg.channelId,
+      msg.id,
+    );
   },
 );
 

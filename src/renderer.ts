@@ -167,7 +167,7 @@ class Game {
 
     // First voting render
     const firstVotingSignal: VotingSignal = {
-      durationMs: (await window.electronAPI.getConfiguration()).voteDurationMs
+      durationMs: (await window.electronAPI.getConfiguration()).voteDurationMs,
     };
     onVotingSignal(undefined as any, JSON.stringify(firstVotingSignal));
   }
@@ -275,7 +275,7 @@ class Game {
       y * this.stage.config.cellSize,
       this.stage.config.cellSize,
       this.stage.config.cellSize,
-      6
+      6,
     );
     this.context.stroke();
     this.context.fill();

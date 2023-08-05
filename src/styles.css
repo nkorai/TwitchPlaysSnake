@@ -9,7 +9,7 @@ body {
 }
 
 canvas {
-  border: 5px solid #304321;;
+  border: 5px solid #304321;
   background: #000;
 }
 
@@ -42,7 +42,6 @@ canvas {
 #game_state_info > .left {
   width: 50%;
 }
-
 
 #game_state_info > .right {
   width: 50%;

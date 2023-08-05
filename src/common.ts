@@ -83,4 +83,4 @@ export interface Configuration {
   minGameChatDistance: number;
   maxGameChatDistance: number;
   gameMode: GameMode;
-};
+}

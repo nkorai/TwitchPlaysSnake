@@ -1,7 +1,7 @@
+import { IpcMainInvokeEvent } from 'electron';
 import lodash from 'lodash';
 import { Configuration, GameMode } from './common';
 import { appPersistentStore } from './main';
-import { IpcMainInvokeEvent } from 'electron';
 
 const CONFIGURATION_KEY = 'CONFIGURATION_KEY';
 
@@ -14,16 +14,23 @@ const initialConfigurationSeed: Configuration = {
 
 export const getConfiguration = (): Configuration => {
   // Merge of the persistent configuration and the initialConfigurationSeed to ensure that new properties are always seeded correctly
-  let persistentConfiguration: Configuration | undefined = appPersistentStore.get(CONFIGURATION_KEY) as Configuration | undefined;
+  let persistentConfiguration: Configuration | undefined =
+    appPersistentStore.get(CONFIGURATION_KEY) as Configuration | undefined;
   if (!persistentConfiguration) {
     persistentConfiguration = initialConfigurationSeed;
     setConfiguration(undefined, persistentConfiguration);
   }
 
-  const mergedConfiguration = lodash.merge(initialConfigurationSeed, persistentConfiguration);
+  const mergedConfiguration = lodash.merge(
+    initialConfigurationSeed,
+    persistentConfiguration,
+  );
   return mergedConfiguration;
 };
 
-export const setConfiguration = (_event: IpcMainInvokeEvent, configuration: Configuration): void => {
+export const setConfiguration = (
+  _event: IpcMainInvokeEvent,
+  configuration: Configuration,
+): void => {
   appPersistentStore.set(CONFIGURATION_KEY, configuration);
 };

@@ -65,8 +65,14 @@ export const processInputToBuffer = (
   let distanceInteger = parseInt(distanceString);
 
   // Clamp down the values between the minimum and maximum distance values
-  distanceInteger = Math.min(distanceInteger, getConfiguration().maxGameChatDistance);
-  distanceInteger = Math.max(distanceInteger, getConfiguration().minGameChatDistance);
+  distanceInteger = Math.min(
+    distanceInteger,
+    getConfiguration().maxGameChatDistance,
+  );
+  distanceInteger = Math.max(
+    distanceInteger,
+    getConfiguration().minGameChatDistance,
+  );
 
   inputBuffer.push(new GameCommand(direction, distanceInteger));
 };
