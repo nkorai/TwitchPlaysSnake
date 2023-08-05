@@ -42,12 +42,17 @@ chatClient.onMessage(
     msg: PrivateMessage,
   ) => {
     const canUpdateGameState = msg.userInfo.isBroadcaster || msg.userInfo.isMod;
-    processInputToBuffer(text, canUpdateGameState);
-    await apiClient.moderation.deleteChatMessages(
-      msg.channelId,
-      msg.channelId,
-      msg.id,
+    const processInputToBufferResponse = processInputToBuffer(
+      text,
+      canUpdateGameState,
     );
+    if (processInputToBufferResponse.isGameMessage) {
+      await apiClient.moderation.deleteChatMessages(
+        msg.channelId,
+        msg.channelId,
+        msg.id,
+      );
+    }
   },
 );
 

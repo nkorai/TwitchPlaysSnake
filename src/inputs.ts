@@ -10,13 +10,19 @@ import { mainWindow } from './main';
 
 const inputBuffer: Array<GameCommand> = [];
 
+interface ProcessInputBufferResponse {
+  isGameMessage: boolean;
+}
+
 /* This is the entrypoint for all incoming game chat messages */
 export const processInputToBuffer = (
   inputString: string,
   canUpdateGameState: boolean,
-): void => {
+): ProcessInputBufferResponse => {
   if (!inputString.toLowerCase().startsWith('sg:')) {
-    return;
+    return {
+      isGameMessage: false,
+    };
   }
 
   if (
@@ -28,6 +34,9 @@ export const processInputToBuffer = (
       const persistentConfiguration = getConfiguration();
       persistentConfiguration.gameMode = inputGameMode;
       setConfiguration(undefined, persistentConfiguration);
+      return {
+        isGameMessage: true,
+      };
     }
   }
 
@@ -38,7 +47,9 @@ export const processInputToBuffer = (
   const chatCommandMatchGroups =
     directionAndDistanceString.match(/([a-zA-Z]+)(-?\d+)?/);
   if (!chatCommandMatchGroups || chatCommandMatchGroups.length != 3) {
-    return;
+    return {
+      isGameMessage: false,
+    };
   }
 
   const directionString = chatCommandMatchGroups[1];
@@ -59,7 +70,9 @@ export const processInputToBuffer = (
       direction = Direction.DOWN;
       break;
     default:
-      return;
+      return {
+        isGameMessage: false,
+      };
   }
 
   let distanceInteger = parseInt(distanceString);
@@ -75,6 +88,9 @@ export const processInputToBuffer = (
   );
 
   inputBuffer.push(new GameCommand(direction, distanceInteger));
+  return {
+    isGameMessage: true,
+  };
 };
 
 const emitVotingSignal = (): void => {
