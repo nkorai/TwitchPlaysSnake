@@ -146,7 +146,10 @@ export const processBuffer = (): void => {
     )[0];
     gameCommandToExecute = popularityCommand.gameCommand;
   } else if (getConfiguration().gameMode === GameMode.CONTINUOUS) {
-    gameCommandToExecute = new GameCommand(Direction.CONTINUE, 1);
+    gameCommandToExecute = new GameCommand(
+      Direction.CONTINUE,
+      getConfiguration().minGameChatDistance,
+    );
   } else {
     return;
   }

@@ -8,6 +8,7 @@ import { IpcRendererEvent } from 'electron';
 import { merge } from 'lodash';
 import ProgressBar from 'progressbar.js';
 import {
+  Configuration,
   Direction,
   ElectronAPI,
   GameCommand,
@@ -321,6 +322,10 @@ const displayScreen = async (screen: Screen): Promise<void> => {
     'configuration_container',
   ) as HTMLDivElement;
 
+  const configurationInputs = document.getElementById(
+    'configuration_inputs',
+  ) as HTMLDivElement;
+
   switch (screen) {
     case Screen.GAME:
       gameScreen.style.display = 'block';
@@ -330,19 +335,77 @@ const displayScreen = async (screen: Screen): Promise<void> => {
       gameScreen.style.display = 'none';
       configurationScreen.style.display = 'block';
 
-      const channelNameConfiguration = document.getElementById(
-        'channel_name_configuration',
-      ) as HTMLInputElement;
+      configurationInputs.innerHTML = '';
 
-      channelNameConfiguration.onchange = async (event: Event) => {
-        console.log('naush help', event);
-        const channelNameInputValue = (event.target as any).value as string;
-        const configuration = await window.electronAPI.getConfiguration();
-        configuration.channelName = channelNameInputValue;
-        window.electronAPI.setConfiguration(configuration);
+      const configurationInputsDefinitions: Record<
+        keyof Configuration,
+        {
+          id: string;
+          title: string;
+          placeholder?: string;
+          min?: number;
+          max?: number;
+          displayConfigOption: boolean;
+          type: 'text' | 'number';
+        }
+      > = {
+        channelName: {
+          id: 'configuration_channel_name',
+          displayConfigOption: true,
+          type: 'text',
+          placeholder: 'sadboifeverdreamz',
+          title: 'Channel Name',
+        },
+        gameMode: {
+          id: 'configuration_game_mode',
+          displayConfigOption: true,
+          type: 'text',
+          title: 'Game Mode',
+        },
+        minGameChatDistance: {
+          id: 'configuration_min_chat_distance',
+          displayConfigOption: true,
+          type: 'number',
+          title: 'Min Chat Distance',
+        },
+        maxGameChatDistance: {
+          id: 'configuration_max_chat_distance',
+          displayConfigOption: true,
+          type: 'number',
+          title: 'Max Chat Distance',
+        },
+        voteDurationMs: {
+          id: 'configuration_vote_duration_ms',
+          displayConfigOption: true,
+          type: 'number',
+          title: 'Vote Duration (ms)',
+        },
       };
 
-      channelNameConfiguration.value = configuration.channelName || '';
+      Object.keys(configurationInputsDefinitions).forEach(
+        (inputDefinitionKey: keyof Configuration) => {
+          const inputDefinition =
+            configurationInputsDefinitions[inputDefinitionKey];
+          const inputElement = document.createElement('input');
+          inputElement.id = inputDefinition.id;
+          inputElement.placeholder = inputDefinition.placeholder;
+          inputElement.type = inputDefinition.type;
+          inputElement.min = inputDefinition.min?.toString();
+          inputElement.max = inputDefinition.max?.toString();
+
+          inputElement.onchange = async (event: Event) => {
+            const inputValue = (event.target as any).value as string;
+            const configuration = await window.electronAPI.getConfiguration();
+            (configuration as any)[inputDefinitionKey] = inputValue;
+            window.electronAPI.setConfiguration(configuration);
+          };
+
+          inputElement.value = (configuration as any)[inputDefinitionKey] || '';
+
+          configurationInputs.appendChild(inputElement);
+        },
+      );
+
       break;
     default:
       throw Error('Unexpected display screen command received');
