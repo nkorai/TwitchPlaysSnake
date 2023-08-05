@@ -8,7 +8,6 @@ import { IpcEventString } from './common';
 import { getConfiguration, setConfiguration } from './config';
 import { processBuffer, processInputToBuffer } from './inputs';
 import { getHighScore, setHighScore } from './score';
-import * as secrets from './utils/secrets.json';
 
 export let mainWindow: BrowserWindow;
 export const appPersistentStore = new Store();
@@ -27,57 +26,78 @@ const apiClient = new ApiClient({
 
 // Setup connection configurations
 // These include the channel, username and password
-const chatClient = new ChatClient({
-  channels: [secrets.twitchChannelName],
-});
-chatClient.connect().catch(console.log);
+let chatClient: ChatClient | undefined = undefined;
 
-// We shall pass the parameters which shall be required
-chatClient.onMessage(
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  async (
-    _channel: string,
-    _user: string,
-    text: string,
-    msg: PrivateMessage,
-  ) => {
-    const canUpdateGameState = msg.userInfo.isBroadcaster || msg.userInfo.isMod;
-    const processInputToBufferResponse = processInputToBuffer(
-      text,
-      canUpdateGameState,
-    );
-    if (processInputToBufferResponse.isGameMessage) {
-      await apiClient.moderation.deleteChatMessages(
-        msg.channelId,
-        msg.channelId,
-        msg.id,
+export const initializeChatClient = (): void => {
+  const channelName = getConfiguration().channelName;
+  if (!channelName) {
+    return;
+  }
+
+  if (chatClient) {
+    chatClient.quit();
+  }
+
+  chatClient = new ChatClient({
+    channels: [channelName],
+  });
+
+  chatClient.connect().catch(console.log);
+  chatClient.quit;
+  // We shall pass the parameters which shall be required
+  chatClient.onMessage(
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    async (
+      _channel: string,
+      _user: string,
+      text: string,
+      msg: PrivateMessage,
+    ) => {
+      const canUpdateGameState =
+        msg.userInfo.isBroadcaster || msg.userInfo.isMod;
+      const processInputToBufferResponse = processInputToBuffer(
+        text,
+        canUpdateGameState,
       );
-    }
-  },
-);
+      if (processInputToBufferResponse.isGameMessage) {
+        await apiClient.moderation.deleteChatMessages(
+          msg.channelId,
+          msg.channelId,
+          msg.id,
+        );
+      }
+    },
+  );
+};
 
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    height: 610,
+    height: 640,
     width: 370,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
     },
     alwaysOnTop: true,
-    backgroundColor: '#000',
     frame: false,
+    backgroundColor: '#000',
+    maximizable: false,
+    movable: true,
   });
 
   // and load the index.html of the app.
   mainWindow
     .loadFile(path.join(__dirname, '../index.html'))
     .catch(() => console.log('Unable to load index.html'));
+
   ipcMain.handle(IpcEventString.SET_HIGH_SCORE, setHighScore);
   ipcMain.handle(IpcEventString.GET_HIGH_SCORE, getHighScore);
   ipcMain.handle(IpcEventString.SET_CONFIGURATION, setConfiguration);
   ipcMain.handle(IpcEventString.GET_CONFIGURATION, getConfiguration);
+
+  // Attempt chat initialization as soon as the game starts
+  initializeChatClient();
 }
 
 // This method will be called when Electron has finished

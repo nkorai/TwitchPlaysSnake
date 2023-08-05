@@ -306,11 +306,82 @@ class Game {
   }
 }
 
+enum Screen {
+  GAME,
+  CONFIGURATION,
+}
+
+const displayScreen = async (screen: Screen): Promise<void> => {
+  const configuration = await window.electronAPI.getConfiguration();
+
+  const gameScreen = document.getElementById(
+    'game_container',
+  ) as HTMLDivElement;
+  const configurationScreen = document.getElementById(
+    'configuration_container',
+  ) as HTMLDivElement;
+
+  switch (screen) {
+    case Screen.GAME:
+      gameScreen.style.display = 'block';
+      configurationScreen.style.display = 'none';
+      break;
+    case Screen.CONFIGURATION:
+      gameScreen.style.display = 'none';
+      configurationScreen.style.display = 'block';
+
+      const channelNameConfiguration = document.getElementById(
+        'channel_name_configuration',
+      ) as HTMLInputElement;
+
+      channelNameConfiguration.onchange = async (event: Event) => {
+        console.log('naush help', event);
+        const channelNameInputValue = (event.target as any).value as string;
+        const configuration = await window.electronAPI.getConfiguration();
+        configuration.channelName = channelNameInputValue;
+        window.electronAPI.setConfiguration(configuration);
+      };
+
+      channelNameConfiguration.value = configuration.channelName || '';
+      break;
+    default:
+      throw Error('Unexpected display screen command received');
+  }
+};
+
+const setUpScreenNavigationButtons = (): void => {
+  const configurationButton = document.getElementById(
+    'configuration_button',
+  ) as HTMLButtonElement;
+
+  const backToMainButton = document.getElementById(
+    'back_to_main_button',
+  ) as HTMLButtonElement;
+
+  configurationButton.onclick = async () => {
+    await displayScreen(Screen.CONFIGURATION);
+  };
+
+  backToMainButton.onclick = async () => {
+    // TODO: if channel name is not configured don't allow navigation
+    await displayScreen(Screen.GAME);
+  };
+};
 /**
  * Window Load
  */
 window.onload = async function () {
   const canvas = document.getElementById('game_board') as HTMLCanvasElement;
+
+  setUpScreenNavigationButtons();
+
+  // For fresh launches of the game, check if there is a base configuration and if there isn't send to the configuration
+  const configuration = await window.electronAPI.getConfiguration();
+  if (!configuration.channelName) {
+    displayScreen(Screen.CONFIGURATION);
+  } else {
+    displayScreen(Screen.GAME);
+  }
 
   const game = new Game(canvas);
   await game.beginGame();

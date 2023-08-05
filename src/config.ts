@@ -1,11 +1,12 @@
 import { IpcMainInvokeEvent } from 'electron';
 import lodash from 'lodash';
 import { Configuration, GameMode } from './common';
-import { appPersistentStore } from './main';
+import { appPersistentStore, initializeChatClient } from './main';
 
 const CONFIGURATION_KEY = 'CONFIGURATION_KEY';
 
 const initialConfigurationSeed: Configuration = {
+  channelName: undefined,
   voteDurationMs: 5000,
   minGameChatDistance: 1,
   maxGameChatDistance: 10,
@@ -28,9 +29,14 @@ export const getConfiguration = (): Configuration => {
   return mergedConfiguration;
 };
 
+const configurationUpdated = () => {
+  initializeChatClient();
+};
+
 export const setConfiguration = (
   _event: IpcMainInvokeEvent,
   configuration: Configuration,
 ): void => {
   appPersistentStore.set(CONFIGURATION_KEY, configuration);
+  configurationUpdated();
 };

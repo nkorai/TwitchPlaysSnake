@@ -79,6 +79,7 @@ export enum IpcEventString {
 }
 
 export interface Configuration {
+  channelName: string;
   voteDurationMs: number;
   minGameChatDistance: number;
   maxGameChatDistance: number;
