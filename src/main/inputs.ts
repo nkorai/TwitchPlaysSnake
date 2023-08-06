@@ -1,12 +1,12 @@
+import { mainWindow } from '.';
 import {
   Direction,
   GameCommand,
   GameMode,
   IpcEventString,
   VotingSignal,
-} from './common';
+} from '../common';
 import { getConfiguration, setConfiguration } from './config';
-import { mainWindow } from './main';
 
 const inputBuffer: Array<GameCommand> = [];
 

@@ -6,6 +6,8 @@
 // needed in the renderer process.
 import { IpcRendererEvent } from 'electron';
 import { merge } from 'lodash';
+// Import all of Bootstrap's JS
+import 'bootstrap';
 import ProgressBar from 'progressbar.js';
 import {
   Configuration,
@@ -14,8 +16,8 @@ import {
   GameCommand,
   hexToRgb,
   VotingSignal,
-} from './common';
-import './styles.css';
+} from '../common';
+import './scss/styles.scss';
 
 declare global {
   interface Window {
@@ -315,11 +317,9 @@ enum Screen {
 const displayScreen = async (screen: Screen): Promise<void> => {
   const configuration = await window.electronAPI.getConfiguration();
 
-  const gameScreen = document.getElementById(
-    'game_container',
-  ) as HTMLDivElement;
+  const gameScreen = document.getElementById('game_screen') as HTMLDivElement;
   const configurationScreen = document.getElementById(
-    'configuration_container',
+    'configuration_screen',
   ) as HTMLDivElement;
 
   const configurationInputs = document.getElementById(

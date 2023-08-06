@@ -6,7 +6,7 @@ import {
   ElectronAPI,
   IpcEventString,
   OnMainCommandCallbackFunction,
-} from './common';
+} from '../common';
 
 // It has the same sandbox as a Chrome extension.
 window.addEventListener('DOMContentLoaded', () => {

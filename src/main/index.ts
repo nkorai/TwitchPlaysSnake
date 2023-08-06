@@ -4,7 +4,7 @@ import { ChatClient, PrivateMessage } from '@twurple/chat';
 import { app, BrowserWindow, ipcMain } from 'electron';
 import Store from 'electron-store';
 import * as path from 'path';
-import { IpcEventString } from './common';
+import { IpcEventString } from '../common';
 import { getConfiguration, setConfiguration } from './config';
 import { processBuffer, processInputToBuffer } from './inputs';
 import { getHighScore, setHighScore } from './score';
@@ -76,7 +76,7 @@ function createWindow() {
     height: 640,
     width: 370,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, '../renderer/preload.js'),
       nodeIntegration: true,
     },
     alwaysOnTop: true,
@@ -88,7 +88,7 @@ function createWindow() {
 
   // and load the index.html of the app.
   mainWindow
-    .loadFile(path.join(__dirname, '../index.html'))
+    .loadFile(path.join(__dirname, '../../index.html'))
     .catch(() => console.log('Unable to load index.html'));
 
   ipcMain.handle(IpcEventString.SET_HIGH_SCORE, setHighScore);

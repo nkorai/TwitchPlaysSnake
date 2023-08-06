@@ -1,7 +1,7 @@
 import { IpcMainInvokeEvent } from 'electron';
 import lodash from 'lodash';
-import { Configuration, GameMode } from './common';
-import { appPersistentStore, initializeChatClient } from './main';
+import { appPersistentStore, initializeChatClient } from '.';
+import { Configuration, GameMode } from '../common';
 
 const CONFIGURATION_KEY = 'CONFIGURATION_KEY';
 

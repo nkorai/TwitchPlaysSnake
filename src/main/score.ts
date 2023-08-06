@@ -1,5 +1,5 @@
 import { IpcMainInvokeEvent } from 'electron';
-import { appPersistentStore } from './main';
+import { appPersistentStore } from '.';
 
 const HIGH_SCORE_KEY = 'HIGH_SCORE_KEY';
 
