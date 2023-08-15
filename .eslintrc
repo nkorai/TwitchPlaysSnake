@@ -6,9 +6,9 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
-    // "async",
-    // "async/node",
-    // "async/typescript",
+    "async",
+    "async/node",
+    "async/typescript",
     "prettier"
   ],
   "parserOptions": {
