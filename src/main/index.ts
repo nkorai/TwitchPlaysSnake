@@ -7,7 +7,7 @@ import * as path from 'path';
 import { IpcEventString } from '../common';
 import { getConfiguration, setConfiguration } from './config';
 import { processBuffer, processInputToBuffer } from './inputs';
-import { getHighScore, setHighScore } from './score';
+import { clearHighScore, getHighScore, setHighScore } from './score';
 
 export let mainWindow: BrowserWindow;
 export const appPersistentStore = new Store();
@@ -91,8 +91,12 @@ function createWindow() {
     .loadFile(path.join(__dirname, '../../index.html'))
     .catch(() => console.log('Unable to load index.html'));
 
+  // High scores
   ipcMain.handle(IpcEventString.SET_HIGH_SCORE, setHighScore);
   ipcMain.handle(IpcEventString.GET_HIGH_SCORE, getHighScore);
+  ipcMain.handle(IpcEventString.CLEAR_HIGH_SCORE, clearHighScore);
+
+  // Configuration section
   ipcMain.handle(IpcEventString.SET_CONFIGURATION, setConfiguration);
   ipcMain.handle(IpcEventString.GET_CONFIGURATION, getConfiguration);
 

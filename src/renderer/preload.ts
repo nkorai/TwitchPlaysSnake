@@ -18,6 +18,8 @@ window.addEventListener('DOMContentLoaded', () => {
     setHighScore: async (highScore: number) =>
       ipcRenderer.invoke(IpcEventString.SET_HIGH_SCORE, highScore),
     getHighScore: async () => ipcRenderer.invoke(IpcEventString.GET_HIGH_SCORE),
+    clearHighScore: async () =>
+      ipcRenderer.invoke(IpcEventString.CLEAR_HIGH_SCORE),
     setConfiguration: async (configuration: Configuration) =>
       ipcRenderer.invoke(IpcEventString.SET_CONFIGURATION, configuration),
     getConfiguration: async () =>

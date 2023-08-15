@@ -14,6 +14,7 @@ export interface ElectronAPI {
   ) => Electron.IpcRenderer;
   setHighScore: (highScore: number) => Promise<any>;
   getHighScore: () => Promise<number>;
+  clearHighScore: () => Promise<any>;
   setConfiguration: (configuration: Configuration) => Promise<any>;
   getConfiguration: () => Promise<Configuration>;
 }
@@ -72,6 +73,7 @@ export interface VotingSignal {
 export enum IpcEventString {
   GAME_COMMAND = 'gameCommand',
   SET_HIGH_SCORE = 'setHighScore',
+  CLEAR_HIGH_SCORE = 'clearHighScore',
   GET_HIGH_SCORE = 'getHighScore',
   VOTE_PERIOD_STARTED = 'votePeriodStarted',
   GET_CONFIGURATION = 'getConfiguration',

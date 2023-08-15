@@ -10,6 +10,10 @@ export const setHighScore = async (
   appPersistentStore.set(HIGH_SCORE_KEY, highScore);
 };
 
+export const clearHighScore = async (_event: IpcMainInvokeEvent) => {
+  appPersistentStore.set(HIGH_SCORE_KEY, 0);
+};
+
 export const getHighScore = async (_event: IpcMainInvokeEvent) => {
   return appPersistentStore.get(HIGH_SCORE_KEY, 0);
 };

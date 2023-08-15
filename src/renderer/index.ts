@@ -123,6 +123,10 @@ class Snake {
   }
 }
 
+interface RenderResult {
+  thereWasACollision: boolean;
+}
+
 class Game {
   stage: Stage;
   snake: Snake;
@@ -142,7 +146,10 @@ class Game {
       void (async () => {
         const gameCommand = JSON.parse(value) as GameCommand;
         for (let i = 0; i < gameCommand.distance; i++) {
-          await this.render(gameCommand);
+          const { thereWasACollision } = await this.render(gameCommand);
+          if (thereWasACollision) {
+            return;
+          }
         }
       })();
     };
@@ -175,7 +182,10 @@ class Game {
     onVotingSignal(undefined as any, JSON.stringify(firstVotingSignal));
   }
 
-  async render(gameCommand?: GameCommand, initialRenderPass?: boolean) {
+  async render(
+    gameCommand?: GameCommand,
+    initialRenderPass?: boolean,
+  ): Promise<RenderResult> {
     // Set Stage direction
     if (typeof gameCommand != 'undefined') {
       // If the game command says keep moving in the same direction, do not update the stage direction
@@ -215,9 +225,10 @@ class Game {
     // Check Collision
     if (this.collision(newX, newY, initialRenderPass) == true) {
       this.snake.resetGame();
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      this.render(undefined, true);
-      return;
+      await this.render(undefined, true);
+      return {
+        thereWasACollision: true,
+      };
     }
 
     // Logic of Snake food
@@ -248,6 +259,9 @@ class Game {
     this.drawCell(this.stage.food.x, this.stage.food.y, CellType.FOOD);
 
     await this.updateScore();
+    return {
+      thereWasACollision: false,
+    };
   }
 
   async updateScore() {
@@ -412,13 +426,17 @@ const displayScreen = async (screen: Screen): Promise<void> => {
   }
 };
 
-const setUpScreenNavigationButtons = (): void => {
+const wireUpButtons = (): void => {
   const configurationButton = document.getElementById(
     'configuration_button',
   ) as HTMLButtonElement;
 
   const backToMainButton = document.getElementById(
     'back_to_main_button',
+  ) as HTMLButtonElement;
+
+  const resetHighScoreButton = document.getElementById(
+    'reset_high_score_button',
   ) as HTMLButtonElement;
 
   configurationButton.onclick = async () => {
@@ -429,6 +447,10 @@ const setUpScreenNavigationButtons = (): void => {
     // TODO: if channel name is not configured don't allow navigation
     await displayScreen(Screen.GAME);
   };
+
+  resetHighScoreButton.onclick = async () => {
+    await window.electronAPI.clearHighScore();
+  };
 };
 /**
  * Window Load
@@ -436,7 +458,7 @@ const setUpScreenNavigationButtons = (): void => {
 window.onload = async function () {
   const canvas = document.getElementById('game_board') as HTMLCanvasElement;
 
-  setUpScreenNavigationButtons();
+  wireUpButtons();
 
   // For fresh launches of the game, check if there is a base configuration and if there isn't send to the configuration
   const configuration = await window.electronAPI.getConfiguration();
