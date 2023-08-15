@@ -66,6 +66,17 @@ body {
 
 #configuration_screen {
   #configuration_inputs {
-    padding-top: 20px;
+    padding: 0 0 20px 20px;
+
+    h6 {
+      padding-top: 30px;
+      font-weight: bold;
+    }
+  }
+
+  #configuration_custom {
+    #reset_high_score_button {
+      margin-top: 15px;
+    }
   }
 }
