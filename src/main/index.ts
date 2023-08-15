@@ -112,7 +112,12 @@ app
   .then(() => {
     createWindow();
 
-    setInterval(processBuffer, getConfiguration().voteDurationMs);
+    const runProcessBufferLoop = () => {
+      processBuffer();
+      setTimeout(runProcessBufferLoop, getConfiguration().voteDurationMs);
+    };
+
+    setTimeout(runProcessBufferLoop, getConfiguration().voteDurationMs);
 
     app.on('activate', function () {
       // On macOS it's common to re-create a window in the app when the
