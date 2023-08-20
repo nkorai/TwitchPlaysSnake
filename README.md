@@ -1,53 +1,16 @@
-# electron-quick-start-typescript
+## How do I run the game
+Technically all you need is to check out this repo and run `npm start`. You may have to make sure you have Typescript and Webpack/Webpack CLI installed, maybe globally depending on your dev setup. Add your Twitch channel name in the configuration screen and hit the back button to have the app start listening to your Twitch chat. Try writing a command like "sg:down" and see the Snake change directions. You will see a pop up to authenticate against Twitch after the first game chat message, this authentication is required to allow the app to delete the game command messages from your chat.
 
-**Clone and run for a quick way to see Electron in action.**
+## How does the game work
+Once the game is started, a new vote is carried out every x milliseconds. Users can vote on what direction and distance the snake moves in by typing in chat commands like sg:right, sg:left, sg:up and sg:down. Users can also chat sg:right10 to move the snake 10 units on that vote, an option I added to allow the game to be sped up if chat chooses to. The votes are tallied and the most voted on command wins e.g. sg:right, sg:right10, sg:left, sg:left in a voting session results in sg:left being executed. Hitting the wall or running over yourself results in dying and a reset.
 
-This is a [TypeScript](https://www.typescriptlang.org) port of the [Electron Quick Start repo](https://github.com/electron/electron-quick-start) -- a minimal Electron application based on the [Quick Start Guide](http://electron.atom.io/docs/tutorial/quick-start) within the Electron documentation.
+The game runs in 2 modes:
+- Static: If there are no votes in a round, then the snake does not move. If there are votes, the logic described above is executed.
+- Continuous: If there are no votes in a round, then the snake keeps moving in the direction it last moved in - 1 unit. If there are votes, the logic described above is executed.
 
-**Use this app along with the [Electron API Demos](http://electron.atom.io/#get-started) app for API code examples to help you get started.**
-
-A basic Electron application needs just these files:
-
-- `package.json` - Points to the app's main file and lists its details and dependencies.
-- `main.ts` - Starts the app and creates a browser window to render HTML. This is the app's **main process**.
-- `index.html` - A web page to render. This is the app's **renderer process**.
-
-You can learn more about each of these components within the [Quick Start Guide](http://electron.atom.io/docs/tutorial/quick-start).
-
-## To Use
-
-To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
-
-```bash
-# Clone this repository
-git clone https://github.com/electron/electron-quick-start-typescript
-# Go into the repository
-cd electron-quick-start-typescript
-# Install dependencies
-npm install
-# Run the app
-npm start
-```
-
-Note: If you're using Linux Bash for Windows, [see this guide](https://www.howtogeek.com/261575/how-to-run-graphical-linux-desktop-applications-from-windows-10s-bash-shell/) or use `node` from the command prompt.
-
-## Re-compile automatically
-
-To recompile automatically and to allow using [electron-reload](https://github.com/yan-foto/electron-reload), run this in a separate terminal:
-
-```bash
-npm run watch
-```
-
-## Resources for Learning Electron
-
-- [electronjs.org/docs](https://electronjs.org/docs) - all of Electron's documentation
-- [Electron Fiddle](https://electronjs.org/fiddle) - create, play, and share small Electron experiments
-- [electronjs.org/community#boilerplates](https://electronjs.org/community#boilerplates) - sample starter apps created by the community
-- [electron/electron-quick-start](https://github.com/electron/electron-quick-start) - a very basic starter Electron app
-- [electron/simple-samples](https://github.com/electron/simple-samples) - small applications with ideas for taking them further
-- [hokein/electron-sample-apps](https://github.com/hokein/electron-sample-apps) - small demo apps for the various Electron APIs
-
-## License
-
-[CC0 1.0 (Public Domain)](LICENSE.md)
+The game keeps track of score and also the high score, which can be reset in the configuration screen. A list of all things that can configured are:
+- The channel name
+- The game mode
+- Minimum chat distance e.g. setting it to 5 makes every vote move the snake 5 units at a minimum
+- Maximum chat distance e.g. setting this to 10 (default) prevents chat from moving the snake more than 10 units every vote
+- Vote duration (ms): how often to conduct a vote round
