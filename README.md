@@ -1,3 +1,5 @@
+> You can find a longer write up on building this on my blog [here](https://nkorai.com/i-built-a-twitch-chat-snake-game)
+
 ## How do I run the game
 Technically all you need is to check out this repo and run `npm start`. You may have to make sure you have Typescript and Webpack/Webpack CLI installed, maybe globally depending on your dev setup. Add your Twitch channel name in the configuration screen and hit the back button to have the app start listening to your Twitch chat. Try writing a command like "sg:down" and see the Snake change directions. You will see a pop up to authenticate against Twitch after the first game chat message, this authentication is required to allow the app to delete the game command messages from your chat.
 
